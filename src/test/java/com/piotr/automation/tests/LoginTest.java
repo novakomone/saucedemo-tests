@@ -10,25 +10,23 @@ public class LoginTest extends TestBase {
     @Test(description = "Login with valid user and log out")
     public void validLoginAndLogoutTest() {
 
-        // given
-        LoginPage loginPage = new LoginPage(driver);
 
-        // UC-1
-        // when
-        loginPage.login("standard_user", "secret_sauce");
+        LoginPage loginPage = new LoginPage(getDriver());
 
-        // then
-        InventoryPage inventoryPage = new InventoryPage(driver);
+
+        loginPage.login(TestData.STANDARD_USER, TestData.VALID_PASSWORD);
+
+        InventoryPage inventoryPage = new InventoryPage(getDriver());
         Assert.assertTrue(
                 inventoryPage.isInventoryVisible(),
                 "Inventory page should be visible after successful login"
         );
 
-        // when
-        inventoryPage.logout();
-        LoginPage loginPageAfterLogout = new LoginPage(driver);
 
-        // then
+        inventoryPage.logout();
+        LoginPage loginPageAfterLogout = new LoginPage(getDriver());
+
+
         Assert.assertTrue(
                 loginPageAfterLogout.isLoginPageDisplayed(),
                 "Login page should be visible after logout"
@@ -38,34 +36,32 @@ public class LoginTest extends TestBase {
     @Test(description = "Login with locked out user")
     public void lockedOutUserLoginTest() {
 
-        // given
-        LoginPage loginPage = new LoginPage(driver);
 
-        // UC-2
-        // when
-        loginPage.login("locked_out_user", "secret_sauce");
+        LoginPage loginPage = new LoginPage(getDriver());
 
-        // then
+
+        loginPage.login(TestData.LOCKED_OUT_USER, TestData.VALID_PASSWORD);
+
+
         Assert.assertEquals(
                 loginPage.getErrorMessage(),
-                "Epic sadface: Sorry, this user has been locked out."
+                TestData.ERROR_LOCKED_OUT
         );
     }
 
     @Test(description = "Login with empty username")
     public void emptyUsernameLoginTest() {
 
-        // given
-        LoginPage loginPage = new LoginPage(driver);
 
-        // UC-3
-        // when
-        loginPage.login("", "secret_sauce");
+        LoginPage loginPage = new LoginPage(getDriver());
 
-        // then
+
+        loginPage.login(TestData.EMPTY_VALUE, TestData.VALID_PASSWORD);
+
+
         Assert.assertEquals(
                 loginPage.getErrorMessage(),
-                "Epic sadface: Username is required"
+                TestData.ERROR_USERNAME_REQUIRED
         );
 
     }
@@ -73,34 +69,29 @@ public class LoginTest extends TestBase {
     @Test(description = "Login with empty password")
     public void emptyPasswordLoginTest() {
 
-        // given
-        LoginPage loginPage = new LoginPage(driver);
+        LoginPage loginPage = new LoginPage(getDriver());
 
-        // UC-4
-        // when
-        loginPage.login("standard_user", "");
 
-        // then
+        loginPage.login(TestData.STANDARD_USER, TestData.EMPTY_VALUE);
+
+
         Assert.assertEquals(
                 loginPage.getErrorMessage(),
-                "Epic sadface: Password is required"
+                TestData.ERROR_PASSWORD_REQUIRED
         );
     }
 
     @Test(description = "Login with invalid credentials")
     public void invalidCredentialsLoginTest() {
 
-        // given
-        LoginPage loginPage = new LoginPage(driver);
+        LoginPage loginPage = new LoginPage(getDriver());
 
-        // UC-5
-        // when
-        loginPage.login("wrong_user", "wrong_password");
+        loginPage.login(TestData.INVALID_USER, TestData.INVALID_PASSWORD);
 
-        // then
+
         Assert.assertEquals(
                 loginPage.getErrorMessage(),
-                "Epic sadface: Username and password do not match any user in this service"
+                TestData.ERROR_INVALID_CREDENTIALS
         );
     }
 }

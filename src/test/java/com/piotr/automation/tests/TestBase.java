@@ -7,24 +7,28 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
+
 public class TestBase {
 
-    protected WebDriver driver;
+    private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     protected final String baseUrl = "https://www.saucedemo.com/";
 
     @Parameters("browser")
     @BeforeMethod
     public void setUp(@Optional("chrome") String browser) {
-        System.out.println("Setting up browser: " + browser);
-        driver = BrowserManager.createDriver(browser);
-        driver.get(baseUrl);
+        driver.set(BrowserManager.createDriver(browser));
+        getDriver().get(baseUrl);
+    }
+
+    protected WebDriver getDriver() {
+        return driver.get();
     }
 
     @AfterMethod
     public void tearDown() {
-        System.out.println("Tear down...===END TEST===");
-        if (driver != null) {
-            driver.quit();
+        if (getDriver() != null) {
+            getDriver().quit();
+            driver.remove();
         }
     }
 }
